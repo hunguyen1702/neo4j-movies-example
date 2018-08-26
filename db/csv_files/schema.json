@@ -1,0 +1,8 @@
+[["friends", []],
+["rated", ["comment", "stars"]],
+["acts_in", ["name"]],
+["movies", ["studio", "releaseDate", "imdbId", "runtime", "description", "language", "title", "version", "trailer", "imageUrl", "genre", "tagline", "lastModified", "id", "homepage"]],
+["directed", []],
+["users", ["password", "roles", "name", "login"]]]
+["directors", ["birthday", "birthplace", "name", "lastModified", "id", "biography", "version", "profileImageUrl"]],
+["actors", ["birthday", "birthplace", "name", "lastModified", "id", "biography", "version", "profileImageUrl"]],
