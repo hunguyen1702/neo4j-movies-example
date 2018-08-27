@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180827014941) do
+ActiveRecord::Schema.define(version: 20180827064627) do
 
   create_table "act_in_movies", force: :cascade do |t|
     t.integer  "actor_id",   limit: 4
@@ -41,13 +41,14 @@ ActiveRecord::Schema.define(version: 20180827014941) do
     t.text     "description",  limit: 65535
     t.string   "language",     limit: 255
     t.string   "title",        limit: 255
-    t.string   "trailer",      limit: 255
-    t.string   "image_url",    limit: 255
+    t.text     "trailer",      limit: 65535
+    t.text     "image_url",    limit: 65535
     t.string   "genre",        limit: 255
     t.text     "tag_line",     limit: 65535
-    t.string   "homepage",     limit: 255
+    t.text     "homepage",     limit: 65535
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
+    t.integer  "director_id",  limit: 4
   end
 
   create_table "people", force: :cascade do |t|
@@ -58,8 +59,22 @@ ActiveRecord::Schema.define(version: 20180827014941) do
     t.string   "profile_img", limit: 255
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
-    t.integer  "type",        limit: 4
   end
+
+  create_table "people_person_types", id: false, force: :cascade do |t|
+    t.integer "person_id",      limit: 4, null: false
+    t.integer "person_type_id", limit: 4, null: false
+  end
+
+  add_index "people_person_types", ["person_id", "person_type_id"], name: "index_people_person_types_on_person_id_and_person_type_id", unique: true, using: :btree
+
+  create_table "person_types", force: :cascade do |t|
+    t.string   "name",       limit: 255
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "person_types", ["name"], name: "index_person_types_on_name", unique: true, using: :btree
 
   create_table "rates", force: :cascade do |t|
     t.integer  "user_id",    limit: 4
