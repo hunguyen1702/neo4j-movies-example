@@ -6,7 +6,6 @@ class CreatePeople < ActiveRecord::Migration
       t.string :name
       t.text :biography
       t.string :profile_img
-      t.references :type, index: true, foreign_key: true
 
       t.timestamps null: false
     end
