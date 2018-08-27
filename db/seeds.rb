@@ -1,10 +1,3 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
 require 'csv'
 
 def read_file_content file_names
@@ -36,9 +29,10 @@ def person_mapping data
   [Person.new(person_params), person]
 end
 
-def load_and_create_objects file_names
+def load_and_create_person file_names
   csv = read_file_content file_names
   list_objects = get_list_objects csv
+  people = []
   list_objects.each do |object|
     person = person_mapping object
     person, object = person_mapping object
@@ -48,12 +42,13 @@ def load_and_create_objects file_names
       person_type = PersonType.find_or_create_by name: name
       person.person_types << person_type
     end
-    person.save unless person.persisted?
+    people << person
   end
+  Person.import people
 end
+["actors.csv", "directors.csv"].each {|file| load_and_create_person file}
 
-["actors.csv", "directors.csv"].each {|file| load_and_create_objects file}
-
+import_users = []
 user_csv = read_file_content "users.csv"
 users = get_list_objects user_csv
 users.each do |user|
@@ -66,11 +61,13 @@ users.each do |user|
     email: "#{user["properties"]["login"]}@gmail.com"
   }
   user = User.new user_params
-  user.save unless user.persisted?
+  import_users << user
 end
+User.import import_users
 
 movie_csv = read_file_content "movies.csv"
 movies = get_list_objects movie_csv
+import_movies = []
 movies.each do |movie|
   movie_params = {
     id: movie["id"],
@@ -88,8 +85,9 @@ movies.each do |movie|
     homepage: movie["properties"]["homepage"]
   }
   movie = Movie.new movie_params
-  movie.save unless movie.persisted?
+  import_movies << movie
 end
+Movie.import import_movies
 
 directed_csv = read_file_content "directed.csv"
 directed = get_list_objects directed_csv
@@ -100,14 +98,16 @@ directed.each do |directed_movie|
   movie.save
 end
 
+import_acts = []
 act_csv = read_file_content "acts_in.csv"
 acts = get_list_objects act_csv
 acts.each do |act|
   person = Person.find act["start"]
   movie = Movie.find act["end"]
   act_in_movie = ActInMovie.new actor_id: person.id, movie_id: movie.id
-  act_in_movie.save
+  import_acts << act_in_movie
 end
+ActInMovie.import import_acts
 
 rated_csv = read_file_content "rated.csv"
 rates = get_list_objects rated_csv

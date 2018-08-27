@@ -26,6 +26,7 @@ gem "mysql2", "0.3.21"
 gem "config"
 gem "devise"
 gem "pry-rails"
+gem "activerecord-import"
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
