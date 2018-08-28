@@ -27,15 +27,15 @@
 	li{
 		border-radius: 5px;
 		overflow: hidden;
+		background: black;
 	}
 	img{
-		max-width: 100%;
-		width: 100%;
 		height: auto;
 		display: block;
+		margin: auto;
 	}
 
-	.flex-direction-nav{ 
+	.flex-direction-nav{
 		list-style: none;
 		z-index: 2;
 		position: absolute;
@@ -96,7 +96,7 @@
 			width: 100%;
 		}
 	}
-	.team-name{ 
+	.team-name{
 		@include em(16);
 		margin: 0;
 	}
@@ -117,25 +117,25 @@
 		line-height: 1.9;
 		transition: .3s ease;
 	}
-	.facebook{ 
+	.facebook{
 		background-color: #204385;
 		&:hover{
 			background-color: lighten(#204385, 10%);
 		}
 	}
-	.twitter{ 
+	.twitter{
 		background-color: #2aa9e0;
 		&:hover{
 			background-color: lighten(#2aa9e0, 10%);
 		}
 	}
-	.google-plus{ 
+	.google-plus{
 		background-color: #d3492c;
 		&:hover{
 			background-color: lighten(#d3492c, 10%);
 		}
 	}
-	.pinterest{ 
+	.pinterest{
 		background-color: #ca2128;
 		&:hover{
 			background-color: lighten(#ca2128, 10%);
@@ -240,7 +240,7 @@ ul.arrow{
 
 .map{
 	clear: both;
-	height: 490px; 
+	height: 490px;
 	margin-bottom: 30px;
 }
 

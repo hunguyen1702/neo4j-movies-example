@@ -36,6 +36,8 @@ Rails.application.configure do
   # Raises helpful error messages.
   config.assets.raise_runtime_errors = true
   config.action_mailer.default_url_options = {host: 'localhost', port: 3000}
+  config.neo4j.session.type = :http
+  config.neo4j.session.url = 'http://neo4j:123@localhost:7474'
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
