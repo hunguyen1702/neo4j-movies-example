@@ -1,29 +1,51 @@
-require 'wombat'
+require 'uri'
+require 'net/http'
 
-base_url = "https://www.imdb.com"
-
-def return_poster_link data, key
-  return '' unless data[key] && data[key].match(/ src="(.+)">/)
-  data[key].match(/ src="(.+)">/)[1]
-end
-
-Dir.chdir "/home/nguyen.viet.hung/projects/neo4j-movies-example/db"
+api_key = "69c13a9b5d6b958e136df927e8d681b5"
+api = "https://api.themoviedb.org/3/find/"
+query_string = "?external_source=imdb_id&language=en-US&api_key="
+ids_file = "/home/hunguyen/projects/neo4j-movie/neo4j-movie/db/csv_files/list_movie_ids.txt"
+img_prefix_url = "http://image.tmdb.org/t/p/w500"
 list_ids = []
-File.open("csv_files/list_movie_ids.txt").each_line {|line| list_ids << line.strip}
-list_ids.reject! &:empty?
+File.open(ids_file).each_line {|line| list_ids << line.strip}
 
-list_imgs = {}
-list_ids[0..10].each do |id|
-  img_tag = Wombat.crawl do
-    base_url base_url
-    path "/title/#{id}/"
-    img_tag "css=div.poster", :html
+responses = []
+thread_pool = []
+pool_size = 30
+
+list_ids.each do |id|
+  url = URI("#{api}#{id}#{query_string}#{api_key}")
+  thr = Thread.new do
+    http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    request = Net::HTTP::Get.new(url)
+    request.body = "{}"
+
+    begin
+      response = http.request(request)
+      puts "[#{response.code} #{response.message}] #{id} #{response.read_body.truncate(100)}"
+      img_path = JSON.parse(response.read_body).deep_symbolize_keys[:movie_results].first[:poster_path]
+      puts "\t\t #{img_path}"
+      [id, "#{img_prefix_url}#{img_path}"]
+    rescue
+      nil
+    end
   end
-  puts img_tag["img_tag"]
-  list_imgs[id] = return_poster_link(img_tag, "img_tag")
+  thread_pool << thr
+  responses << thr
+  if thread_pool.length >= pool_size
+    sleep 10
+    thread_pool.each(&:join)
+    thread_pool = []
+  end
 end
 
+thread_pool.each(&:join)
+responses.map!(&:value).compact!
 
-File.open("csv_files/list_imgs.txt", "w") do |f|
-  f.puts list_imgs
-end
+
+output_file = "/home/hunguyen/projects/neo4j-movie/neo4j-movie/db/csv_files/list_imgs.json"
+img_list_file = File.open(output_file, "w")
+JSON.dump(responses.to_h, img_list_file)
