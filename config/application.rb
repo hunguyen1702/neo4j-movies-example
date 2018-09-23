@@ -1,7 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
-require 'neo4j/railtie'
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -16,7 +15,5 @@ module Neo4jMovie
       g.helper false
       g.stylesheets false
     end
-    config.neo4j.session.type = :http
-    config.neo4j.session.url = 'http://neo4j:neo4j@localhost:7474'
   end
 end
