@@ -33,6 +33,7 @@ def load_and_create_person file_names
   csv = read_file_content file_names
   list_objects = get_list_objects csv
   people = []
+  people_type = []
   list_objects.each do |object|
     person = person_mapping object
     person, object = person_mapping object
@@ -40,13 +41,24 @@ def load_and_create_person file_names
     person_type_names.delete "person"
     person_type_names.each do |name|
       person_type = PersonType.find_or_create_by name: name
-      person.person_types << person_type
+      people_type << PeoplePersonType.new(person_type_id: person_type.id,
+        person_id: person.id)
     end
     people << person
   end
-  Person.import people
+  [people, people_type]
 end
-["actors.csv", "directors.csv"].each {|file| load_and_create_person file}
+
+import_people = []
+import_people_type = []
+["actors.csv", "directors.csv"].each do |file|
+  pp, ppt = load_and_create_person file
+  import_people += pp
+  import_people_type += ppt
+end
+
+Person.import import_people
+PeoplePersonType.import(import_people_type.uniq{|p| [p.person_id, p.person_type_id]})
 
 import_users = []
 user_csv = read_file_content "users.csv"
