@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180923041817) do
+ActiveRecord::Schema.define(version: 20180924154835) do
 
   create_table "act_in_movies", force: :cascade do |t|
     t.integer  "actor_id",   limit: 4
@@ -48,8 +48,14 @@ ActiveRecord::Schema.define(version: 20180923041817) do
     t.text     "homepage",     limit: 65535
     t.datetime "created_at",                 null: false
     t.datetime "updated_at",                 null: false
-    t.integer  "director_id",  limit: 4
   end
+
+  create_table "movies_people", force: :cascade do |t|
+    t.integer "person_id", limit: 4, null: false
+    t.integer "movie_id",  limit: 4, null: false
+  end
+
+  add_index "movies_people", ["person_id", "movie_id"], name: "index_movies_people_on_person_id_and_movie_id", unique: true, using: :btree
 
   create_table "people", force: :cascade do |t|
     t.datetime "birthday"
@@ -61,7 +67,7 @@ ActiveRecord::Schema.define(version: 20180923041817) do
     t.datetime "updated_at",                null: false
   end
 
-  create_table "people_person_types", id: false, force: :cascade do |t|
+  create_table "people_person_types", force: :cascade do |t|
     t.integer "person_id",      limit: 4, null: false
     t.integer "person_type_id", limit: 4, null: false
   end

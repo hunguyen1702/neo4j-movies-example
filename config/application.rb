@@ -8,7 +8,7 @@ Bundler.require(*Rails.groups)
 
 module Neo4jMovie
   class Application < Rails::Application
-    config.generators { |g| g.orm :neo4j }
+    # config.generators { |g| g.orm :neo4j }
     config.active_record.raise_in_transactional_callbacks = true
     config.generators do |g|
       g.template_engine nil

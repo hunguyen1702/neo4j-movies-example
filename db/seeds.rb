@@ -103,12 +103,12 @@ Movie.import import_movies
 
 directed_csv = read_file_content "directed.csv"
 directed = get_list_objects directed_csv
+import_derected = []
 directed.each do |directed_movie|
-  person = Person.find directed_movie["start"]
-  movie = Movie.find directed_movie["end"]
-  movie.director = person
-  movie.save
+  import_derected << MoviesPerson.new(person_id: directed_movie["start"],
+    movie_id: directed_movie["end"])
 end
+MoviesPerson.import import_derected
 
 import_acts = []
 act_csv = read_file_content "acts_in.csv"
@@ -139,3 +139,20 @@ friends.each do |friend|
   friendship = FriendShip.new user_id: user.id, friend_user_id: user1.id
   friendship.save
 end
+
+
+# update all img of mysql db
+img_hash = JSON.parse File.open('db/csv_files/list_imgs.json').read
+thread_pool = []
+img_hash.each do |imdb_id, link|
+  thread_pool << Thread.new do
+    ActiveRecord::Base.connection_pool.with_connection do
+      Movie.find_by(imdb_id: imdb_id).update_attributes image_url: link
+    end
+  end
+  if thread_pool.length > 5
+    thread_pool.each(&:join)
+    thread_pool = []
+  end
+end
+thread_pool.each(&:join)
