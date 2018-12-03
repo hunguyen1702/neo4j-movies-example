@@ -10,6 +10,3 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require libs/jquery-1.11.1.min
-//= require libs/plugins.js
-//= require libs/app.js
